@@ -9,12 +9,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import py.edu.ucom.alezv21.entities.Libros;
+import py.edu.ucom.alezv21.entities.Monedas;
 import py.edu.ucom.alezv21.entities.Usuarios;
 
 @ApplicationScoped
 public class DataSourceJSON {
-    public String SRC_USUARIOS = "rc/main/java/py/edu/ucom/alezv21/utils/libros.json";
-    public String SRC = "rc/main/java/py/edu/ucom/alezv21/utils/libros.json";
+    public String SRC_MONEDAS = "src/main/java/py/edu/ucom/alezv21/utils/monedas.json";
+    public String SRC_USUARIOS = "src/main/java/py/edu/ucom/alezv21/utils/usuarios.json";
+    public String SRC = "src/main/java/py/edu/ucom/alezv21/utils/libros.json";
 
    public void guardarLibro(Libros libro) {
         try {
@@ -148,5 +150,35 @@ public class DataSourceJSON {
             // TODO: handle exception
         }
         
+    }
+     public List<Monedas> obtenerMonedas(){
+        ObjectMapper mapper = new ObjectMapper();
+        List<Monedas> lista = new ArrayList();
+
+        try {
+            lista = mapper.readValue(
+                    new File(this.SRC_MONEDAS),
+                    new TypeReference<List<Monedas>>() {
+                    });
+
+        } catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
+        }
+
+        return lista;
+    }
+
+    public Monedas buscarMonedas(String codigo) {
+        Monedas data = null;
+        List<Monedas> lista = obtenerMonedas();
+
+        for (Monedas item : lista) {
+            if (item.getCodigo().equals(codigo)) {
+                data = item;
+                break;
+            }
+        }
+        return data;
     }
 }
