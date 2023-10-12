@@ -8,8 +8,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import py.edu.ucom.alezv21.entities.Clientes;
+import py.edu.ucom.alezv21.entities.Factura;
 import py.edu.ucom.alezv21.entities.Libros;
 import py.edu.ucom.alezv21.entities.Monedas;
+import py.edu.ucom.alezv21.entities.Productos;
 import py.edu.ucom.alezv21.entities.Usuarios;
 
 @ApplicationScoped
@@ -17,6 +20,27 @@ public class DataSourceJSON {
     public String SRC_MONEDAS = "src/main/java/py/edu/ucom/alezv21/utils/monedas.json";
     public String SRC_USUARIOS = "src/main/java/py/edu/ucom/alezv21/utils/usuarios.json";
     public String SRC = "src/main/java/py/edu/ucom/alezv21/utils/libros.json";
+    public String SRC_CLIENTES = "src/main/java/py/edu/ucom/alezv21/utils/clientes.json";
+    public String SRC_PRODUCTOS = "src/main/java/py/edu/ucom/alezv21/utils/productos.json";
+    public String SRC_FACTURAS = "src/main/java/py/edu/ucom/alezv21/utils/factura.json";
+
+    public List<Factura> obtenerFacturas() {
+        ObjectMapper mapper = new ObjectMapper();
+        List<Factura> facturas = new ArrayList<>();
+        try {
+            facturas = mapper.readValue(
+                    new File(this.SRC_FACTURAS),
+                    new TypeReference<List<Factura>>() {
+                    });
+
+        } catch (Exception e) {
+            // Manejar la excepción, por ejemplo, imprimir el mensaje de error
+            e.printStackTrace();
+        }
+
+        return facturas;
+    }
+
 
    public void guardarLibro(Libros libro) {
         try {
@@ -180,5 +204,106 @@ public class DataSourceJSON {
             }
         }
         return data;
+    }
+
+    public void guardarProducto(Productos producto) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+
+            List<Productos> lista = obtenerProductos();
+            lista.add(producto);
+            mapper.writeValue(new File(this.SRC_PRODUCTOS), lista);
+        } catch (Exception e) {
+            // Manejar la excepción, por ejemplo, imprimir el mensaje de error
+            e.printStackTrace();
+        }
+    }
+
+    public List<Productos> obtenerProductos() {
+        ObjectMapper mapper = new ObjectMapper();
+        List<Productos> productos = new ArrayList<>();
+        try {
+            productos = mapper.readValue(
+                    new File(this.SRC_PRODUCTOS),
+                    new TypeReference<List<Productos>>() {
+                    });
+
+        } catch (Exception e) {
+            // Manejar la excepción, por ejemplo, imprimir el mensaje de error
+            e.printStackTrace();
+        }
+
+        return productos;
+    }
+
+    public void guardarCliente(Clientes cliente) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+
+            List<Clientes> lista = obtenerClientes();
+            lista.add(cliente);
+            mapper.writeValue(new File(this.SRC_CLIENTES), lista);
+        } catch (Exception e) {
+            // Manejar la excepción, por ejemplo, imprimir el mensaje de error
+            e.printStackTrace();
+        }
+    }
+
+    public List<Clientes> obtenerClientes() {
+        ObjectMapper mapper = new ObjectMapper();
+        List<Clientes> clientes = new ArrayList<>();
+        try {
+            clientes = mapper.readValue(
+                    new File(this.SRC_CLIENTES),
+                    new TypeReference<List<Clientes>>() {
+                    });
+
+        } catch (Exception e) {
+            // Manejar la excepción, por ejemplo, imprimir el mensaje de error
+            e.printStackTrace();
+        }
+
+        return clientes;
+    }
+
+    public Productos buscarProducto(String codigo) {
+        Productos producto = null;
+        List<Productos> data = obtenerProductos();
+
+        for (Productos item : data) {
+            if (item.getCodigo().equals(codigo)) {
+                producto = item;
+                break;
+            }
+        }
+        return producto;
+    }
+
+    public Clientes buscarCliente(String documento) {
+        Clientes cliente = null;
+        List<Clientes> data = obtenerClientes();
+
+        for (Clientes item : data) {
+            if (item.getDocumento().equals(documento)) {
+                cliente = item;
+                break;
+            }
+        }
+        return cliente;
+    }
+    public void guardarFacturas(List<Factura> facturas) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.writeValue(new File(this.SRC_FACTURAS), facturas);
+        } catch (Exception e) {
+            // Manejar la excepción, por ejemplo, imprimir el mensaje de error
+            e.printStackTrace();
+        }
+    }
+
+    public void guardarFactura(Factura factura) {
+        List<Factura> facturas = obtenerFacturas();
+        facturas.add(factura);
+        guardarFacturas(facturas);
     }
 }
