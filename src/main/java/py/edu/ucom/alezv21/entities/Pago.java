@@ -7,7 +7,6 @@ public class Pago {
     private String documentoUsuario;
     private List<Productos> productos;
 
-    // Getters y setters para las propiedades
 
     public String getDocumentoCliente() {
         return documentoCliente;

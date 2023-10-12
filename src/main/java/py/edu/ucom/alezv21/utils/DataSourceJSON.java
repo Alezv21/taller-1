@@ -13,6 +13,7 @@ import py.edu.ucom.alezv21.entities.Factura;
 import py.edu.ucom.alezv21.entities.Libros;
 import py.edu.ucom.alezv21.entities.Monedas;
 import py.edu.ucom.alezv21.entities.Productos;
+import py.edu.ucom.alezv21.entities.Usuario;
 import py.edu.ucom.alezv21.entities.Usuarios;
 
 @ApplicationScoped
@@ -23,6 +24,7 @@ public class DataSourceJSON {
     public String SRC_CLIENTES = "src/main/java/py/edu/ucom/alezv21/utils/clientes.json";
     public String SRC_PRODUCTOS = "src/main/java/py/edu/ucom/alezv21/utils/productos.json";
     public String SRC_FACTURAS = "src/main/java/py/edu/ucom/alezv21/utils/factura.json";
+    public String SRC_USUARIO = "src/main/java/py/edu/ucom/alezv21/utils/usuario.json";
 
     public List<Factura> obtenerFacturas() {
         ObjectMapper mapper = new ObjectMapper();
@@ -291,6 +293,7 @@ public class DataSourceJSON {
         }
         return cliente;
     }
+    
     public void guardarFacturas(List<Factura> facturas) {
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -306,4 +309,34 @@ public class DataSourceJSON {
         facturas.add(factura);
         guardarFacturas(facturas);
     }
+
+    public List<Usuario> obtenerUsuariosC() {
+        ObjectMapper mapper = new ObjectMapper();
+        List<Usuario> usuarios = new ArrayList<>();
+        try {
+            usuarios = mapper.readValue(
+                    new File(this.SRC_USUARIO),
+                    new TypeReference<List<Usuario>>() {
+                    });
+        } catch (Exception e) {
+            // Manejar la excepción, por ejemplo, imprimir el mensaje de error
+            e.printStackTrace();
+        }
+        return usuarios;
+    }
+
+    public Usuario buscarUsuarioC(String documento) {
+        Usuario usuario = null;
+        List<Usuario> data = obtenerUsuariosC();
+
+        for (Usuario item : data) {
+            if (item.getDocumento().equals(documento)) {
+                usuario = item;
+                break;
+            }
+        }
+        return usuario;
+    }
+
+    
 }

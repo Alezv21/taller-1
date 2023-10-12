@@ -11,7 +11,7 @@ import jakarta.ws.rs.core.MediaType;
 import py.edu.ucom.alezv21.entities.Pago;
 import py.edu.ucom.alezv21.servicios.CajaRegistradoraService;
 
-@Path("caja")
+@Path("/tienda/caja")
 public class CajaRegistradoraResource {
 
     @Inject 

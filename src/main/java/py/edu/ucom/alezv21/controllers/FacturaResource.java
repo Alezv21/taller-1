@@ -14,32 +14,25 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import py.edu.ucom.alezv21.entities.Factura;
-import py.edu.ucom.alezv21.entities.Productos;
 import py.edu.ucom.alezv21.utils.DataSourceJSON;
 
 @Path("factura")
 public class FacturaResource {
+
     @Inject
     private DataSourceJSON ds;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Factura obtenerFactura() {
-        Factura factura = null;
+    public List<Factura> obtenerFacturas() {
+        List<Factura> facturas = null;
         ObjectMapper mapper = new ObjectMapper();
         try {
-            factura = mapper.readValue(new File("factura.json"), Factura.class);
-
-            List<Productos> productos = factura.getProductos();
-            for (Productos producto : productos) {
-                Productos productoBD = ds.buscarProducto(producto.getCodigo());
-                if (productoBD != null) {
-                    producto.setPrecio(productoBD.getPrecio()); 
-                }
-            }
+            facturas = mapper.readValue(new File("src/main/java/py/edu/ucom/alezv21/utils/factura.json"), new TypeReference<List<Factura>>() {});
         } catch (IOException e) {
             e.printStackTrace();
+            // Manejar la excepción, por ejemplo, enviar una respuesta de error al cliente
         }
-        return factura;
+        return facturas;
     }
 }

@@ -13,6 +13,7 @@ import py.edu.ucom.alezv21.entities.Clientes;
 import py.edu.ucom.alezv21.entities.Factura;
 import py.edu.ucom.alezv21.entities.Pago;
 import py.edu.ucom.alezv21.entities.Productos;
+import py.edu.ucom.alezv21.entities.Usuario;
 import py.edu.ucom.alezv21.utils.DataSourceJSON;
 
 @ApplicationScoped
@@ -23,9 +24,14 @@ public class CajaRegistradoraService {
     public Map<String, String> procesarPago(String documentoCliente, String documentoUsuario, Pago pago) {
         Map<String, String> respuesta = new HashMap<>();
         Clientes cliente = this.ds.buscarCliente(documentoCliente);
+        Usuario usuario = this.ds.buscarUsuarioC(documentoUsuario); 
 
         if (cliente == null) {
             respuesta.put("error", "Cliente no encontrado");
+            return respuesta;
+        }
+        if (usuario == null) {
+            respuesta.put("error", "Usuario no encontrado");
             return respuesta;
         }
 
@@ -60,7 +66,7 @@ public class CajaRegistradoraService {
         try {
             mapper.writeValue(new File("src/main/java/py/edu/ucom/alezv21/utils/factura.json"), facturas);
             respuesta.put("total", String.valueOf(total));
-            respuesta.put("mensaje", "Pago procesado con éxito y factura guardada en facturas.json");
+            respuesta.put("mensaje", "Pago procesado con éxito y factura guardada en la base de datos");
         } catch (Exception e) {
             respuesta.put("error", "Error al guardar la factura: " + e.getMessage());
         }
