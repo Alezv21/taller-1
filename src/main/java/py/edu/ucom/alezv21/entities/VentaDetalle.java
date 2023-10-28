@@ -17,10 +17,6 @@ import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
-/**
- *
- * @author Jhony
- */
 @Entity
 @Table(name = "venta_detalle")
 @XmlRootElement
@@ -114,7 +110,6 @@ public class VentaDetalle implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof VentaDetalle)) {
             return false;
         }

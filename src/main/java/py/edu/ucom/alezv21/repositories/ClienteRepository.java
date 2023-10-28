@@ -1,4 +1,4 @@
-package py.edu.ucom.alezv21.Repositories;
+package py.edu.ucom.alezv21.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
