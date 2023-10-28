@@ -1,16 +1,21 @@
 package py.edu.ucom.alezv21.services;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import org.jboss.logging.Logger;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import py.edu.ucom.alezv21.repositories.VentaRepository;
-import py.edu.ucom.alezv21.repositories.VentaDetalleRepository;
-
-
+import jakarta.transaction.Transactional;
 import py.edu.ucom.alezv21.config.IDAO;
+import py.edu.ucom.alezv21.entities.Cliente;
 import py.edu.ucom.alezv21.entities.Venta;
 import py.edu.ucom.alezv21.entities.VentaDetalle;
+import py.edu.ucom.alezv21.entities.dto.ResumenVentaDTO;
+import py.edu.ucom.alezv21.entities.dto.VentaDetalleDTO;
+import py.edu.ucom.alezv21.repositories.VentaDetalleRepository;
+import py.edu.ucom.alezv21.repositories.VentaRepository;
 
 
 @ApplicationScoped
@@ -29,6 +34,7 @@ public class VentaService implements IDAO<Venta,Integer> {
     }
 
     @Override
+    @Transactional
     public Venta agregar(Venta param) {
 
         try{
@@ -44,15 +50,19 @@ public class VentaService implements IDAO<Venta,Integer> {
 
             List<VentaDetalle> vdList = param.getVentaDetalleList();
             for(VentaDetalle item: vdList){
-                item.setVentaId(saved);
-                this.repositoryDetalle.save(item);
+                VentaDetalle vdt = new VentaDetalle();
+                vdt.setVentaId(saved);
+                vdt.setProductoId(item.getProductoId());
+                vdt.setSubtotal(item.getSubtotal());
+
+                this.repositoryDetalle.save(vdt);
 
             }
         }
         catch(Exception e){
-            
+            e.printStackTrace();
         }
-        return this.repository.save(param);
+        return param;
     }
 
     

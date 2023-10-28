@@ -123,6 +123,7 @@ public class Venta implements Serializable {
 
     @Override
     public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Venta)) {
             return false;
         }
@@ -135,8 +136,7 @@ public class Venta implements Serializable {
 
     @Override
     public String toString() {
-        return 
-        "py.com.fpj.crm.entity.gen.taller.Venta[ ventaId=" + ventaId + " ]";
+        return "py.com.fpj.crm.entity.gen.taller.Venta[ ventaId=" + ventaId + " ]";
     }
     
 }
