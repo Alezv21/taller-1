@@ -47,7 +47,7 @@ public class VentaDetalle implements Serializable {
     @JoinColumn(name = "venta_id", referencedColumnName = "venta_id")
     @ManyToOne(optional = false)
     private Venta ventaId;
-
+    
     public VentaDetalle() {
     }
 
