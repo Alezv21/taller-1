@@ -29,10 +29,12 @@ public class ProductoService implements IDAO<Producto,Integer> {
         return this.repository.save(param);
     }
 
-    @Override
-    public void eliminar(Integer param) {
-
-        this.repository.deleteById(param);
+    public void eliminar(Integer productoId) {
+        Producto producto = this.repository.findById(productoId).orElse(null);
+        if (producto != null && producto.getVentaDetalleList() != null && !producto.getVentaDetalleList().isEmpty()) {
+            throw new RuntimeException("No se puede eliminar el producto porque tiene ventas asociadas.");
+        }
+        this.repository.deleteById(productoId);
     }
 
     @Override
