@@ -36,9 +36,15 @@ public class VentaResource {
     }
 
     @POST
-    public Venta agregar (Venta param){
-        return this.service.agregar(param);
+    public Response agregar(Venta param) {
+    try {
+        Venta venta = this.service.agregar(param);
+        return Response.ok(venta).build(); // Venta procesada correctamente
+    } catch (Exception e) {
+        String mensajeError = "Error al procesar la venta: " + e.getMessage();
+        return Response.status(Response.Status.BAD_REQUEST).entity(mensajeError).build();
     }
+}
     @GET
     @Path("{id}")
     public Venta obtener(@PathParam("id")Integer param){

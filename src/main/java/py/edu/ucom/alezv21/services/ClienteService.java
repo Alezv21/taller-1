@@ -29,10 +29,12 @@ public class ClienteService implements IDAO<Cliente,Integer> {
         return this.repository.save(param);
     }
 
-    @Override
-    public void eliminar(Integer param) {
-
-        this.repository.deleteById(param);
+    public void eliminar(Integer clienteId) {
+        Cliente cliente = this.repository.findById(clienteId).orElse(null);
+        if (cliente != null && cliente.getVentaList() != null && !cliente.getVentaList().isEmpty()) {
+            throw new RuntimeException("No se puede eliminar el cliente porque tiene ventas asociadas.");
+        }
+        this.repository.deleteById(clienteId);
     }
 
     @Override

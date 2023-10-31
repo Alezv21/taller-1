@@ -19,13 +19,11 @@ import py.edu.ucom.alezv21.repositories.VentaRepository;
 import py.edu.ucom.alezv21.repositories.ProductoRepository;
 import java.util.Optional;
 
-
 @ApplicationScoped
-public class VentaService implements IDAO<Venta,Integer> {
+public class VentaService implements IDAO<Venta, Integer> {
 
     @Inject
     private VentaRepository repository;
-
 
     @Inject
     private VentaDetalleRepository repositoryDetalle;
@@ -41,9 +39,7 @@ public class VentaService implements IDAO<Venta,Integer> {
     @Override
     @Transactional
     public Venta agregar(Venta param) {
-
-        try{
-            
+        try {
             Venta aux = new Venta();
             aux.setClienteId(param.getClienteId());
             aux.setFecha(param.getFecha());
@@ -51,10 +47,10 @@ public class VentaService implements IDAO<Venta,Integer> {
             aux.setTotal(param.getTotal());
 
             Venta saved = this.repository.save(aux);
-            System.out.println(aux.toString());
+            System.out.println("Venta creada correctamente. ID de venta: " + saved.getVentaId());
 
             List<VentaDetalle> vdList = param.getVentaDetalleList();
-            for(VentaDetalle item: vdList){
+            for (VentaDetalle item : vdList) {
                 VentaDetalle vdt = new VentaDetalle();
                 vdt.setVentaId(saved);
                 vdt.setProductoId(item.getProductoId());
@@ -65,44 +61,46 @@ public class VentaService implements IDAO<Venta,Integer> {
 
                 Integer productoId = item.getProductoId().getProductoId();
                 int cantidadVendida = item.getCantidad();
-                productoRepository.reduceStock(productoId, cantidadVendida);
+                int stockActual = productoRepository.findById(productoId).orElseThrow().getStock();
 
+                if (stockActual < cantidadVendida) {
+                    throw new RuntimeException("No hay suficiente stock disponible para el Producto ID: " + productoId);
+                }                
+                productoRepository.reduceStock(productoId, cantidadVendida);
+                System.out.println(
+                        "Stock reducido para Producto ID: " + productoId + ", Cantidad vendida: " + cantidadVendida);
             }
-        }
-        catch(Exception e){
+
+            System.out.println("Venta procesada correctamente.");
+        } catch (Exception e) {
             e.printStackTrace();
+            System.out.println("Error al procesar la venta: " + e.getMessage());
+            throw new RuntimeException("Error al procesar la venta: " + e.getMessage());
+
         }
         return param;
     }
-
-    
 
     @Override
     @Transactional
     public Venta modificar(Venta param) {
         try {
-            // Convertir el ID a Integer si es necesario
             Integer ventaId = param.getVentaId().intValue();
-    
-            // Verificar si la venta existe en la base de datos
+
             Optional<Venta> ventaExistente = this.repository.findById(ventaId);
-            
+
             if (ventaExistente.isPresent()) {
-                // Actualizar los campos de la venta existente con los valores del parámetro
                 Venta ventaActualizada = ventaExistente.get();
                 ventaActualizada.setClienteId(param.getClienteId());
                 ventaActualizada.setFecha(param.getFecha());
                 ventaActualizada.setMetodoPagoId(param.getMetodoPagoId());
                 ventaActualizada.setTotal(param.getTotal());
-    
-                // Guardar la venta actualizada en la base de datos
+
                 Venta ventaGuardada = this.repository.save(ventaActualizada);
                 System.out.println(ventaGuardada.toString());
-    
-                // Eliminar los detalles de venta existentes
+
                 this.repositoryDetalle.deleteByVentaId(ventaGuardada.getVentaId());
-    
-                // Guardar los nuevos detalles de venta
+
                 List<VentaDetalle> vdList = param.getVentaDetalleList();
                 for (VentaDetalle item : vdList) {
                     VentaDetalle vdt = new VentaDetalle();
@@ -110,18 +108,16 @@ public class VentaService implements IDAO<Venta,Integer> {
                     vdt.setProductoId(item.getProductoId());
                     vdt.setCantidad(item.getCantidad());
                     vdt.setSubtotal(item.getSubtotal());
-    
+
                     this.repositoryDetalle.save(vdt);
                 }
-    
+
                 return ventaGuardada;
             } else {
-                // Si la venta no existe, lanzar una excepción o manejar el caso según tu lógica de negocio
                 throw new RuntimeException("Venta no encontrada con ID: " + param.getVentaId());
             }
         } catch (Exception e) {
             e.printStackTrace();
-            // Manejar la excepción según tu lógica de negocio (lanzar otra excepción, loggear, etc.)
             throw new RuntimeException("Error al modificar la venta: " + e.getMessage());
         }
     }
@@ -136,5 +132,5 @@ public class VentaService implements IDAO<Venta,Integer> {
     public List<Venta> listar() {
         return this.repository.findAll();
     }
-    
+
 }
